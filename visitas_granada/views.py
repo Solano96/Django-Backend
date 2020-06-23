@@ -72,9 +72,15 @@ def edit_visit(request, visit_id):
         return HttpResponse(status=404)
 
     if request.method == "POST":
-        form = VisitaForm(request.POST, instance=visit)
+        form = VisitaForm(request.POST, request.FILES)
+
         if form.is_valid():
-            visit = form.save(commit=False)
+            visit.nombre = form.cleaned_data["nombre"]
+            visit.descripcion = form.cleaned_data["descripcion"]
+
+            if form.cleaned_data["foto"]:
+                visit.foto = form.cleaned_data["foto"]
+
             visit.save()
             messages.add_message(request, messages.INFO, 'Visita actualizada con éxito.')
             logger.info("Visit successfully edited.")
