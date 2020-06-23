@@ -1,0 +1,27 @@
+{% extends 'base/base.html' %}
+
+{% load crispy_forms_tags %}
+
+{% block title %} Editar visita {% endblock %}
+
+{% block content %}
+	<div class="container" style="margin:20px;">
+		<h3>Editar visita</h3>
+		<hr>
+		<form method="POST" class="form-group"  enctype="multipart/form-data">
+			{% csrf_token %}
+			{{ form|crispy }}
+			<hr>
+			<div class="container">
+			  <div class="row">
+			    <div class="col-2 col-md-1" style="margin:10px;">
+			       <a href="{% url 'visit_list_view' %}" class="btn btn-danger" >Cancelar</a>
+			    </div>
+			    <div class="col-2 col-md-1" style="margin:10px;">
+			      <button type="submit" class="btn btn-success" >Guardar</button>
+			    </div>
+			  </div>
+			</div>
+		</form>
+	</div>
+{% endblock %}

@@ -1,0 +1,119 @@
+{% extends 'base/base.html' %}
+
+{% block title %} {{visit.nombre}} {% endblock %}
+
+{% block content %}
+
+	<div class="container" style="margin-top: 30px;">
+		<div class="row">
+			<div class="card mb-3" style="width: 1200px;">
+			  <div class="row">
+				<div class="col-md-5">
+				  <img src="{{ visit.foto.url }}" class="card-img" height="320" style="padding:10px">
+				</div>
+				<div class="col-md-7">
+  			  		<div id="googleMap"></div>
+				</div>
+			  </div>
+  			  <div class="row">
+  				  <div class="card-body" style="margin-left:10px;">
+  					  <h5 class="card-title">{{visit.nombre}}</h5>
+  					  <hr>
+  					  <p class="card-text">{{visit.descripcion}}</p>
+  					  <div class="row" style="margin-left:10px;">
+  						  <p><small>Likes:</small> <small id="visit_likes">{{visit.likes}}</small></p>
+  						  &nbsp;&nbsp;&nbsp;
+  						  <a type="button" id="like">
+  							  <i class="fa fa-thumbs-o-up"></i>
+  						  </a>
+  						  &nbsp;&nbsp;&nbsp;
+  						  <a type="button" id="dislike">
+  							  <i class="fa fa-thumbs-o-down"></i>
+  						  </a>
+  					  </div>
+					  <hr>
+				  </div>
+  			  </div>
+  			  <div class="row">
+  				  <div class="card-body" style="margin-left:10px; margin-top:-40px;">
+  					<b>Comentarios:</b>
+  					<div style='padding-left: 2em;'>
+  						{% for comment in comment_list %}
+  							{% if comment.visita == visit %}
+  								<li>{{comment.texto}}</li>
+  							{% endif %}
+  						{% endfor %}
+  					</div>
+				  </div>
+  			  </div>
+			</div>
+		</div>
+	</div>
+
+	<script src = "https://maps.googleapis.com/maps/api/js?key=AIzaSyBOqAYNQ25Cztrga2CKPh7Ma8QoK1eohgo"></script>
+	<script text="text/javascript">
+		// Obtener los likes actuales:
+		var likes = "{{ visit.likes }}";
+		likes = Number(likes);
+		var visit_likes = document.getElementById('visit_likes');
+
+		// Para actualizar en la base de datos el valor de los likes:
+		function SendValue(value) {
+		  $.ajax({
+		      'url': "{% url 'likes' visit.id %}",
+		      'type': 'PUT',
+		      'dataType': 'json',
+		      'data': JSON.stringify({'likes': value}),
+		      'success': function (data)  {
+		          likes = Number(data.likes);
+		      }
+		  })
+		}
+
+		// JQuery:
+		$(document).ready(function() {
+		  // Like:
+		  $("#like").click(function() {
+		      likes += 1;
+		      visit_likes.innerHTML = likes;
+		      SendValue(likes)
+		  });
+
+		  // Dislike
+		  $("#dislike").click(function() {
+		      likes -= 1;
+		      if(likes < 0) { likes = 0; }
+		      visit_likes.innerHTML = likes;
+		      SendValue(likes)
+		  });
+		});
+
+		var myCenter=new google.maps.LatLng(37.177086, -3.589932);
+		var geocoder,map;
+		var address = "Calle Real de la Alhambra, s/n, 18009 Granada" + "{{visit.nombre}}"
+
+
+		geocoder = new google.maps.Geocoder();
+		var mapProp = {
+		  center:myCenter,
+		  zoom:17,
+		  mapTypeId:google.maps.MapTypeId.ROADMAP
+		};
+
+		map = new google.maps.Map(document.getElementById("googleMap"),mapProp);
+
+		geocoder.geocode( { 'address': address}, function(results, status) {
+		  if (status === google.maps.GeocoderStatus.OK) {
+			 map.setCenter(results[0].geometry.location);
+			 var marker = new google.maps.Marker({
+				map: map,
+				position: results[0].geometry.location
+			 });
+		  } else {
+			 alert('Geocode was not successful for the following reason: ' + status);
+		  }
+		});
+
+	</script>
+
+{% endblock %}

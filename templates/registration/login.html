@@ -1,0 +1,29 @@
+{% extends 'base/base.html' %}
+
+{% load crispy_forms_tags %}
+<!-- templates/registration/login.html -->
+
+{% block content %}
+
+<div class="card" style="margin: 50px;">
+	<div class="container" style="margin: 30px;">
+		<h2>Login</h2>
+		<form method="post">
+			{% csrf_token %}
+			{{ form|crispy }}
+
+			<div class="row">
+				<div class="col-2 col-md-2" style="margin: 15px 0 15px 0;">
+					<button type="submit" class="btn btn-primary" >
+						<b>
+							<i class="fa fa-sign-in" aria-hidden="true"></i>
+							Iniciar sesión
+						</b>
+					</button>
+				</div>
+			</div>
+		</form>
+	</div>
+</div>
+
+{% endblock %}

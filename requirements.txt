@@ -1,0 +1,7 @@
+Django>=2.0,<3.0
+psycopg2>=2.7,<3.0
+django-bootstrap4==2.1.1
+django-crispy-forms==1.9.1
+djangorestframework==3.11.0
+djangorestframework-simplejwt==4.4.0
+django-cors-headers==3.4.0
